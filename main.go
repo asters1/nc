@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-//判断文件夹是否存在
+// 判断文件夹是否存在
 func IsExists(path string) {
 	_, err := os.Stat(path)
 	if err != nil {
@@ -18,7 +18,7 @@ func IsExists(path string) {
 	}
 }
 
-//获得目录下的所有文件
+// 获得目录下的所有文件
 func GetFiles(path string) []string {
 	s := []string{}
 	files, _ := ioutil.ReadDir(path)
@@ -29,7 +29,7 @@ func GetFiles(path string) []string {
 
 }
 
-//初始化
+// 初始化
 func NcInit() []string {
 	IsExists("./input")
 	IsExists("./output")
@@ -98,6 +98,9 @@ func FormatFile(path string) {
 		if strings.Index(line, "F") != -1 {
 			index := strings.Index(line, "F")
 			line = line[:index] + "F3000."
+		}
+		if strings.Index(line, "M30") != -1 {
+			line = "M9\r\n" + line
 		}
 
 		//写入line
