@@ -135,12 +135,34 @@ func FormatFile(path string) {
 	}
 }
 
+// 比较文件大小
+func BJM(A []string, B []int64) {
+	// c := 0
+	for i := 0; i < len(B); i++ {
+		for j := i + 1; j < len(B); j++ {
+			if B[i] == B[j] {
+				fmt.Println(A[i] + "与" + A[j] + "文件内容可能相同，请检查...")
+			}
+			// fmt.Println("比较了", c, "次")
+			// c = c + 1
+		}
+	}
+	fmt.Println()
+}
+
 func main() {
+	BJA := []string{}
+	BJB := []int64{}
 	fs := NcInit()
 	for i := 0; i < len(fs); i++ {
+		f, _ := os.Stat(fs[i])
+		BJA = append(BJA, f.Name())
+		BJB = append(BJB, f.Size())
+
 		FormatFile(fs[i])
 		fmt.Println("")
 	}
+	BJM(BJA, BJB)
 
 	fmt.Print("程序结束!!!")
 	// 暂停
