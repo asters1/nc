@@ -43,9 +43,9 @@ func NcInit() []string {
 // 检查名字
 func CheckName(ipath string) string {
 	fpath := "./output/" + ipath[8:]
-	fpath = strings.ReplaceAll(fpath, ".nc", ".MPF")
-	fpath = strings.ReplaceAll(fpath, ".NC", ".MPF")
 	fpath = strings.ReplaceAll(fpath, "-", "_")
+	lastIndex := strings.LastIndex(fpath, ".")
+	fpath = fpath[:lastIndex] + ".MPF"
 	fmt.Println("正在格式化 --> " + fpath[9:])
 	// fmt.Println(fpath)
 	return fpath
