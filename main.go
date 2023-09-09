@@ -8,7 +8,9 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 // 判断文件夹是否存在
@@ -34,6 +36,7 @@ func GetFiles(path string) []string {
 func NcInit() []string {
 	IsExists("./input")
 	IsExists("./output")
+	IsExists("./bak")
 
 	fs := GetFiles("./output")
 	for i := 0; i < len(fs); i++ {
@@ -171,10 +174,50 @@ func BJM(A []string, B []string) {
 	fmt.Println()
 }
 
+func GetTimeName() string {
+	t := time.Now()
+	// fmt.Println(T)
+	// fmt.Println(s)
+	s := strconv.Itoa(t.Year()) + "年" + strconv.Itoa(int(t.Month())) + "月" + strconv.Itoa(t.Day()) + "日" + strconv.Itoa(t.Hour()) + "时" + strconv.Itoa(t.Minute()) + "分" + strconv.Itoa(t.Second()) + "秒"
+	return s
+}
+
+// 备份与定时清理
+func Bak(fs []string) {
+	if len(fs) == 0 {
+		os.Exit(1)
+	}
+	str_dir := "./bak/" + fs[0][8:] + "_" + GetTimeName() + "/"
+
+	os.MkdirAll(str_dir, 0666)
+	for i := 0; i < len(fs); i++ {
+		CopyFile(fs[i], str_dir+fs[i][8:])
+	}
+}
+
+// CopyFile 拷贝文件函数
+func CopyFile(inputName, outputName string) (written int64, err error) {
+	src, err := os.Open(inputName)
+	if err != nil {
+		fmt.Printf("打开 %s 失败!, 错误:%v.\n", inputName, err)
+		return
+	}
+	defer src.Close()
+	dst, err := os.OpenFile(outputName, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Printf("打开 %s 失败, 错误:%v.\n", outputName, err)
+		return
+	}
+	defer dst.Close()
+	return io.Copy(dst, src)
+}
+
 func main() {
+	fs := NcInit()
+	Bak(fs)
+
 	BJA := []string{}
 	BJB := []string{}
-	fs := NcInit()
 	for i := 0; i < len(fs); i++ {
 		f, _ := os.Stat(fs[i])
 		fb, _ := ioutil.ReadFile(fs[i])
