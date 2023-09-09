@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -126,6 +128,8 @@ func FormatFile(path string) {
 				// fmt.Print("last:" + lastLine)
 				if oldLine == lastLine {
 					oldLine = ""
+				} else {
+					oldLine = "\r\n" + oldLine
 				}
 				CheckLineList = append(CheckLineList, oldLine)
 				CheckLineList = append(CheckLineList, line)
@@ -145,13 +149,20 @@ func FormatFile(path string) {
 	}
 }
 
+// 求文件的md5
+func FileHash(data []byte) string {
+	m := md5.New()
+	m.Write(data)
+	return hex.EncodeToString(m.Sum(nil))
+}
+
 // 比较文件大小
-func BJM(A []string, B []int64) {
+func BJM(A []string, B []string) {
 	// c := 0
 	for i := 0; i < len(B); i++ {
 		for j := i + 1; j < len(B); j++ {
 			if B[i] == B[j] {
-				fmt.Println(A[i] + "与" + A[j] + "文件内容可能相同，请检查...")
+				fmt.Println(A[i] + "与" + A[j] + "文件内容相同，请检查...")
 			}
 			// fmt.Println("比较了", c, "次")
 			// c = c + 1
@@ -162,12 +173,13 @@ func BJM(A []string, B []int64) {
 
 func main() {
 	BJA := []string{}
-	BJB := []int64{}
+	BJB := []string{}
 	fs := NcInit()
 	for i := 0; i < len(fs); i++ {
 		f, _ := os.Stat(fs[i])
+		fb, _ := ioutil.ReadFile(fs[i])
 		BJA = append(BJA, f.Name())
-		BJB = append(BJB, f.Size())
+		BJB = append(BJB, FileHash(fb))
 
 		FormatFile(fs[i])
 		fmt.Println("")
