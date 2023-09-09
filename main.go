@@ -54,6 +54,8 @@ func CheckName(ipath string) string {
 func FormatFile(path string) {
 	// 检查可疑行
 	CheckLineList := []string{}
+	oldLine := ""
+	lastLine := ""
 	//	fmt.Println(path)
 	fpath := CheckName(path)
 	//	fmt.Println(f)
@@ -120,9 +122,17 @@ func FormatFile(path string) {
 			line = line + "\r\n"
 			// fmt.Print(line)
 			if strings.Index(line, "Z") != -1 && (strings.Index(line, "X") != -1 || strings.Index(line, "Y") != -1) {
+				// fmt.Print("old:" + oldLine)
+				// fmt.Print("last:" + lastLine)
+				if oldLine == lastLine {
+					oldLine = ""
+				}
+				CheckLineList = append(CheckLineList, oldLine)
 				CheckLineList = append(CheckLineList, line)
+				lastLine = line
 			}
 			fo.WriteString(line)
+			oldLine = line
 		}
 	}
 	if len(CheckLineList) > 20 {
