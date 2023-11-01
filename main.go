@@ -212,13 +212,28 @@ func CopyFile(inputName, outputName string) (written int64, err error) {
 	return io.Copy(dst, src)
 }
 
+func formatXY(l string) string {
+	l_list := strings.Split(l, " ")
+	// fmt.Println(l_list)
+	line := ""
+	for i := 0; i < len(l_list); i++ {
+		if strings.Contains(l_list[i], "X") {
+			line = line + l_list[i] + " "
+		}
+		if strings.Contains(l_list[i], "Y") {
+			line = line + l_list[i]
+		}
+	}
+	return line
+}
+
 func ZKXH(path string) {
 	frist_x_y_switch := true
 	fpath := CheckName(path)
 	// fmt.Println(fpath)
 	fo, _ := os.OpenFile(fpath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	defer fo.Close()
-	fo.WriteString("T1000\r\nN1 G54 G64 G0 G90\r\n")
+	fo.WriteString("G54 G64 G0 G90\r\n")
 
 	fi, _ := os.Open(path)
 	defer fi.Close()
@@ -234,7 +249,8 @@ func ZKXH(path string) {
 		if line[:1] != "N" {
 			line = ""
 		}
-		if strings.Contains(line, "X") || strings.Contains(line, "Y") || strings.Contains(line, "M30") {
+		line = formatXY(line)
+		if line != "" {
 			if frist_x_y_switch {
 				if strings.Contains(line, "X") && !strings.Contains(line, "Y") {
 					line = line + " Y0."
@@ -245,12 +261,6 @@ func ZKXH(path string) {
 				line = line + " S800 M3\r\nZ100.\r\nG1 Z0. F3000.\r\nMCALL CYCLE83(100,0,1,,2.5,,0.5,2,0,0,1,1,3,,,,)\r\n" + line + " F50."
 				frist_x_y_switch = false
 			}
-
-			if strings.Contains(line, "M30") {
-				line = "MCALL\r\nZ100\r\nM9\r\n" + line
-			}
-		} else {
-			line = ""
 		}
 		if line != "" {
 			line = line + "\r\n"
@@ -258,6 +268,7 @@ func ZKXH(path string) {
 		fo.WriteString(line)
 
 	}
+	fo.WriteString("MCALL\r\nZ100\r\nM9\r\nM30\r\n")
 }
 
 func main() {

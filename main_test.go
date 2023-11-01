@@ -1,21 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
 func TestMain(t *testing.T) {
-	// a := CheckName("./input/a.nc")
-	// b := CheckName("./input/a.NC")
-	// c := CheckName("./input/a-b-c.NC")
-	// fmt.Println(a)
-	// fmt.Println(b)
-	// // fmt.Println(c)
-	// e, _ := ioutil.ReadFile("./input/e.nc")
-	// ee, _ := ioutil.ReadFile("./input/ee.nc")
-	// fmt.Println(FileHash(e))
-	// fmt.Println(FileHash(ee))
-	// GetTimeName()
-	// name := GetTimeName()
-	// fmt.Println(name)
+	a := "G0 X23.1 Y76.9 F300"
+	b := "N100 X45.3 Y78.0 S80 M3"
+	c := "G1 X67 Y8"
+	d := "g nj m"
+	fmt.Println(formatXY(a))
+	fmt.Println(formatXY(b))
+	fmt.Println(formatXY(c))
+	fmt.Println(formatXY(d))
 }
