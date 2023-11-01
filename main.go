@@ -182,7 +182,7 @@ func GetTimeName() string {
 	return s
 }
 
-// 备份与定时清理
+// 备份
 func Bak(fs []string) {
 	if len(fs) == 0 {
 		os.Exit(1)
@@ -212,6 +212,54 @@ func CopyFile(inputName, outputName string) (written int64, err error) {
 	return io.Copy(dst, src)
 }
 
+func ZKXH(path string) {
+	frist_x_y_switch := true
+	fpath := CheckName(path)
+	// fmt.Println(fpath)
+	fo, _ := os.OpenFile(fpath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+	defer fo.Close()
+	fo.WriteString("T1000\r\nN1 G54 G64 G0 G90\r\n")
+
+	fi, _ := os.Open(path)
+	defer fi.Close()
+	buf := bufio.NewReader(fi)
+
+	for {
+		line, err := buf.ReadString('\n')
+		if err == io.EOF {
+			break
+		}
+		line = strings.TrimSpace(line)
+		// 分离有效行
+		if line[:1] != "N" {
+			line = ""
+		}
+		if strings.Contains(line, "X") || strings.Contains(line, "Y") || strings.Contains(line, "M30") {
+			if frist_x_y_switch {
+				if strings.Contains(line, "X") && !strings.Contains(line, "Y") {
+					line = line + " Y0."
+				}
+				if strings.Contains(line, "Y") && !strings.Contains(line, "X") {
+					line = line + " X0."
+				}
+				line = line + " S800 M3\r\nZ100.\r\nG1 Z0. F3000.\r\nMCALL CYCLE83(100,0,1,,2.5,,0.5,2,0,0,1,1,3,,,,)\r\n" + line + " F50."
+				frist_x_y_switch = false
+			}
+
+			if strings.Contains(line, "M30") {
+				line = "MCALL\r\nZ100\r\nM9\r\n" + line
+			}
+		} else {
+			line = ""
+		}
+		if line != "" {
+			line = line + "\r\n"
+		}
+		fo.WriteString(line)
+
+	}
+}
+
 func main() {
 	fs := NcInit()
 	Bak(fs)
@@ -224,7 +272,11 @@ func main() {
 		BJA = append(BJA, f.Name())
 		BJB = append(BJB, FileHash(fb))
 
-		FormatFile(fs[i])
+		if strings.Contains(strings.ToLower(fs[i]), strings.ToLower("ZKXH")) {
+			ZKXH(fs[i])
+		} else {
+			FormatFile(fs[i])
+		}
 		fmt.Println("")
 	}
 	BJM(BJA, BJB)
