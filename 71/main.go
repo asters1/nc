@@ -46,7 +46,8 @@ func NcInit() []string {
 }
 
 func ClearInput() {
-	fs := GetFiles("./iutput")
+	fs := GetFiles("./input")
+	// fmt.Println("ClearInput")
 	for i := 0; i < len(fs); i++ {
 		os.RemoveAll(fs[i])
 	}
