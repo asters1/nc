@@ -89,18 +89,17 @@ func FormatFile(path string) {
 		line = strings.TrimSpace(line)
 		// 分离有效行
 		if line[:1] != "N" {
-			if !(strings.Contains(line, "TOOL DATA")) {
+			if !(strings.Contains(line, "TOOL")) {
 				line = ""
 			}
+			// fmt.Println(line)
 		}
-		// 程序第一行
-		if strings.Index(line, "G64") != -1 {
-			line = "N1 G54 G64 G0 G90"
-			//			fmt.Println(line)
-		}
+		fmt.Println(line)
 		// 删除换刀
 		if strings.Index(line, "T") != -1 {
-			line = "G5.1Q1"
+			if !strings.Contains(line, "TOOL") {
+				line = "G5.1Q1"
+			}
 		}
 		// 删除G53
 		if strings.Index(line, "G53") != -1 {
@@ -302,7 +301,7 @@ func main() {
 		fmt.Println("")
 	}
 	BJM(BJA, BJB)
-	ClearInput()
+	// ClearInput()
 
 	fmt.Print("程序结束!!!")
 	// 暂停
