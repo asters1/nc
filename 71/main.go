@@ -94,7 +94,7 @@ func FormatFile(path string) {
 			}
 			// fmt.Println(line)
 		}
-		fmt.Println(line)
+		// fmt.Println(line)
 		// 删除换刀
 		if strings.Index(line, "T") != -1 {
 			if !strings.Contains(line, "TOOL") {
@@ -301,7 +301,7 @@ func main() {
 		fmt.Println("")
 	}
 	BJM(BJA, BJB)
-	// ClearInput()
+	ClearInput()
 
 	fmt.Print("程序结束!!!")
 	// 暂停
