@@ -75,7 +75,7 @@ func FormatFile(path string) {
 	//	fmt.Println(f)
 	fo, _ := os.OpenFile(fpath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	defer fo.Close()
-	fo.WriteString("%\r\n1000\r\n")
+	fo.WriteString("%\r\nO1000\r\n")
 
 	fi, _ := os.Open(path)
 	defer fi.Close()
@@ -98,7 +98,7 @@ func FormatFile(path string) {
 		// 删除换刀
 		if strings.Index(line, "T") != -1 {
 			if !strings.Contains(line, "TOOL") {
-				line = "G5.1Q1"
+				line = "G5.1Q1."
 			}
 		}
 		// 删除G53
@@ -122,11 +122,6 @@ func FormatFile(path string) {
 		// 删除G94
 		if strings.Index(line, "G94") != -1 {
 			line = strings.ReplaceAll(line, "G94 ", "")
-		}
-		// 修改进给速度为F3000
-		if strings.Index(line, "F") != -1 {
-			index := strings.Index(line, "F")
-			line = line[:index] + "F3000."
 		}
 		if strings.Index(line, "M30") != -1 {
 			line = "M9\r\n" + line
