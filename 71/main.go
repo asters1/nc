@@ -240,6 +240,9 @@ func formatXY(l string) string {
 func ZKXH(path string) {
 	frist_x_y_switch := true
 	fpath := CheckName(path)
+	if fpath == "" {
+		return
+	}
 	// fmt.Println(fpath)
 	fo, _ := os.OpenFile(fpath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	defer fo.Close()
