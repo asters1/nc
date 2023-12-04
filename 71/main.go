@@ -124,7 +124,7 @@ func FormatFile(path string) {
 			line = strings.ReplaceAll(line, "G94 ", "")
 		}
 		if strings.Index(line, "M30") != -1 {
-			line = "M9\r\n" + line
+			line = "M9\r\n" + line + "\r\n%\r\n"
 		}
 
 		// 写入line
@@ -241,7 +241,7 @@ func ZKXH(path string) {
 	// fmt.Println(fpath)
 	fo, _ := os.OpenFile(fpath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	defer fo.Close()
-	fo.WriteString("%\r\nO1000\r\nG49 G64 G17 G80 G0 G90 G40 G99\r\nG5.1Q1\r\nZ100.\r\n")
+	fo.WriteString("%\r\nO1000\r\nG49 G64 G17 G80 G0 G90 G40 G99\r\nG5.1Q1\r\nZ200.\r\n")
 
 	fi, _ := os.Open(path)
 	defer fi.Close()
@@ -276,7 +276,7 @@ func ZKXH(path string) {
 		}
 
 	}
-	fo.WriteString("G80\r\nZ100.\r\nM9\r\nM30\r\n")
+	fo.WriteString("G80\r\nZ200.\r\nM9\r\nM30\r\n%\r\n")
 }
 
 func main() {
